@@ -1,0 +1,11 @@
+# Entorno virtual
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Secretos y base local (NUNCA se suben)
+.env
+*.db
+instance/

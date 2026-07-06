@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · StockBox{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
+  <div class="flex gap-3">
+    <a href="{{ url_for('movements.crear') }}"
+       class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+      + Movimiento
+    </a>
+    <a href="{{ url_for('products.crear') }}"
+       class="border border-slate-300 hover:bg-white text-slate-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+      + Producto
+    </a>
+  </div>
+</div>
+
+{# ── Tarjetas de métricas ─────────────────────────────────────── #}
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+    <div class="text-xs uppercase tracking-wide text-slate-500">Productos</div>
+    <div class="text-3xl font-bold text-slate-900 mt-1">{{ total_productos }}</div>
+  </div>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+    <div class="text-xs uppercase tracking-wide text-slate-500">Valor del inventario</div>
+    <div class="text-3xl font-bold text-slate-900 mt-1">${{ "{:,.2f}".format(valor_inventario) }}</div>
+  </div>
+  <div class="bg-white rounded-2xl shadow-sm border p-5
+              {{ 'border-red-300 bg-red-50' if en_alerta else 'border-slate-200' }}">
+    <div class="text-xs uppercase tracking-wide {{ 'text-red-600' if en_alerta else 'text-slate-500' }}">
+      Stock bajo
+    </div>
+    <div class="text-3xl font-bold mt-1 {{ 'text-red-600' if en_alerta else 'text-slate-900' }}">
+      {{ en_alerta|length }}
+    </div>
+  </div>
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+    <div class="text-xs uppercase tracking-wide text-slate-500">Movimientos hoy</div>
+    <div class="text-3xl font-bold text-slate-900 mt-1">{{ movs_hoy }}</div>
+  </div>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-6">
+
+  {# ── Alertas de stock bajo ──────────────────────────────────── #}
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h2 class="font-semibold text-slate-900">⚠ Reponer</h2>
+      <span class="text-xs text-slate-400">stock ≤ mínimo</span>
+    </div>
+    <div class="divide-y divide-slate-100">
+      {% for p in en_alerta %}
+      <div class="px-5 py-3 flex items-center justify-between">
+        <div>
+          <div class="font-medium text-slate-900">{{ p.nombre }}</div>
+          <div class="text-xs text-slate-400">{{ p.sku }} · {{ p.ubicacion or "sin ubicación" }}</div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm">
+            <span class="font-bold text-red-600">{{ p.stock }}</span>
+            <span class="text-slate-400">/ mín {{ p.stock_minimo }}</span>
+          </span>
+          <a href="{{ url_for('movements.crear', producto=p.id) }}"
+             class="text-emerald-600 hover:text-emerald-800 text-sm font-medium">Reponer</a>
+        </div>
+      </div>
+      {% else %}
+      <div class="px-5 py-10 text-center text-slate-400 text-sm">
+        Todo en orden: ningún producto bajo el mínimo ✅
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ── Últimos movimientos ────────────────────────────────────── #}
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200">
+    <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h2 class="font-semibold text-slate-900">Últimos movimientos</h2>
+      <a href="{{ url_for('movements.index') }}" class="text-xs text-indigo-600 hover:underline">ver todos</a>
+    </div>
+    <div class="divide-y divide-slate-100">
+      {% for m in ultimos %}
+      <div class="px-5 py-3 flex items-center justify-between">
+        <div>
+          <div class="font-medium text-slate-900">{{ m.producto.nombre }}</div>
+          <div class="text-xs text-slate-400 capitalize">{{ m.motivo }} · {{ m.fecha.strftime('%d/%m %H:%M') }}</div>
+        </div>
+        <span class="font-mono text-sm {{ 'text-emerald-600' if m.tipo == 'entrada' else 'text-amber-600' }}">
+          {{ '+' if m.tipo == 'entrada' else '−' }}{{ m.cantidad }}
+        </span>
+      </div>
+      {% else %}
+      <div class="px-5 py-10 text-center text-slate-400 text-sm">
+        Sin movimientos todavía.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

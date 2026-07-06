@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% set editando = producto is not none %}
+{% block title %}{{ 'Editar producto' if editando else 'Nuevo producto' }} · StockBox{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+  <h1 class="text-2xl font-bold text-slate-900 mb-6">
+    {{ 'Editar producto' if editando else 'Nuevo producto' }}
+  </h1>
+
+  <form method="post" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">SKU *</label>
+        <input name="sku" required value="{{ valores.get('sku', '') }}" placeholder="COCA-500"
+               class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Categoría</label>
+        <input name="categoria" value="{{ valores.get('categoria', '') }}" placeholder="Bebidas"
+               class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Nombre *</label>
+      <input name="nombre" required value="{{ valores.get('nombre', '') }}" placeholder="Coca Cola 500ml"
+             class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                    focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Precio</label>
+        <input type="number" name="precio" step="0.01" min="0" value="{{ valores.get('precio', '') }}"
+               class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      {% if editando %}
+      <div>
+        <label class="block text-sm font-medium mb-1">Stock actual</label>
+        <input value="{{ producto.stock }}" disabled
+               class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
+      </div>
+      {% else %}
+      <div>
+        <label class="block text-sm font-medium mb-1">Stock inicial</label>
+        <input type="number" name="stock" min="0" value="{{ valores.get('stock', 0) }}"
+               class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      {% endif %}
+      <div>
+        <label class="block text-sm font-medium mb-1">Stock mínimo</label>
+        <input type="number" name="stock_minimo" min="0" value="{{ valores.get('stock_minimo', 0) }}"
+               class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+    </div>
+    {% if editando %}
+    <p class="text-xs text-slate-400 -mt-2">
+      El stock no se edita a mano: se modifica registrando movimientos (así queda el historial).
+    </p>
+    {% endif %}
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Ubicación en depósito</label>
+      <input name="ubicacion" value="{{ valores.get('ubicacion', '') }}" placeholder="Pasillo 3 · Estante B"
+             class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                    focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    </div>
+
+    <div class="flex gap-3 pt-2">
+      <button type="submit"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg px-5 py-2.5 text-sm transition-colors">
+        {{ 'Guardar cambios' if editando else 'Crear producto' }}
+      </button>
+      <a href="{{ url_for('products.index') }}"
+         class="border border-slate-300 hover:bg-slate-50 text-slate-600 font-medium rounded-lg px-5 py-2.5 text-sm transition-colors">
+        Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}StockBox{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+  {% if current_user.is_authenticated %}
+  <nav class="bg-slate-900 text-white">
+    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-8">
+        <a href="{{ url_for('dashboard.index') }}" class="font-bold text-lg tracking-tight">📦 StockBox</a>
+        <div class="flex gap-5 text-sm text-slate-300">
+          <a href="{{ url_for('dashboard.index') }}" class="hover:text-white">Dashboard</a>
+          <a href="{{ url_for('products.index') }}" class="hover:text-white">Productos</a>
+          <a href="{{ url_for('movements.index') }}" class="hover:text-white">Movimientos</a>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 text-sm">
+        <span class="text-slate-400">👤 {{ current_user.username }}</span>
+        <a href="{{ url_for('auth.logout') }}"
+           class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg transition-colors">Salir</a>
+      </div>
+    </div>
+  </nav>
+  {% endif %}
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    {# Mensajes flash: avisos de una sola vez (errores, confirmaciones) #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="mb-4 rounded-lg px-4 py-3 text-sm
+                    {{ 'bg-red-100 text-red-800' if category == 'error' else 'bg-emerald-100 text-emerald-800' }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+</body>
+</html>
