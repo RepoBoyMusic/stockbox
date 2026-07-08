@@ -27,6 +27,7 @@ def _leer_formulario():
         "nombre": request.form.get("nombre", "").strip(),
         "categoria": request.form.get("categoria", "").strip() or "General",
         "ubicacion": request.form.get("ubicacion", "").strip(),
+        "talles": request.form.get("talles", "").strip(),
     }
     errores = []
 
@@ -57,7 +58,7 @@ def _leer_formulario():
 @bp.route("/")
 @login_required
 def index():
-    # Búsqueda y filtro vienen como query params: /productos?q=coca&categoria=Bebidas
+    # Búsqueda y filtro vienen como query params: /productos?q=dunk&categoria=G5
     q = request.args.get("q", "").strip()
     categoria = request.args.get("categoria", "").strip()
 
@@ -161,6 +162,7 @@ def editar(product_id):
         "precio": producto.precio,
         "stock_minimo": producto.stock_minimo,
         "ubicacion": producto.ubicacion or "",
+        "talles": producto.talles or "",
     }
     return render_template("products/form.html", producto=producto, valores=valores)
 

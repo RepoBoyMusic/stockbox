@@ -40,7 +40,8 @@ class Product(db.Model):
     precio = db.Column(db.Numeric(10, 2), nullable=False, default=0)
     stock = db.Column(db.Integer, nullable=False, default=0)
     stock_minimo = db.Column(db.Integer, nullable=False, default=0)
-    ubicacion = db.Column(db.String(60))  # ej: "Pasillo 3 · Estante B"
+    ubicacion = db.Column(db.String(60))  # ej: "Depósito · Rack B2"
+    talles = db.Column(db.String(60))  # curva de talles del modelo, ej: "35–45"
     creado_en = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Un producto tiene muchos movimientos; desde un movimiento se llega

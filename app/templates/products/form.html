@@ -12,13 +12,13 @@
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label class="block text-sm font-medium mb-1">SKU *</label>
-        <input name="sku" required value="{{ valores.get('sku', '') }}" placeholder="COCA-500"
+        <input name="sku" required value="{{ valores.get('sku', '') }}" placeholder="NKE-DUNK-G5"
                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
                       focus:outline-none focus:ring-2 focus:ring-indigo-500">
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Categoría</label>
-        <input name="categoria" value="{{ valores.get('categoria', '') }}" placeholder="Bebidas"
+        <input name="categoria" value="{{ valores.get('categoria', '') }}" placeholder="G5"
                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
                       focus:outline-none focus:ring-2 focus:ring-indigo-500">
       </div>
@@ -26,7 +26,7 @@
 
     <div>
       <label class="block text-sm font-medium mb-1">Nombre *</label>
-      <input name="nombre" required value="{{ valores.get('nombre', '') }}" placeholder="Coca Cola 500ml"
+      <input name="nombre" required value="{{ valores.get('nombre', '') }}" placeholder="Nike Dunk Low Panda"
              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
                     focus:outline-none focus:ring-2 focus:ring-indigo-500">
     </div>
@@ -65,11 +65,19 @@
     </p>
     {% endif %}
 
-    <div>
-      <label class="block text-sm font-medium mb-1">Ubicación en depósito</label>
-      <input name="ubicacion" value="{{ valores.get('ubicacion', '') }}" placeholder="Pasillo 3 · Estante B"
-             class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
-                    focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Ubicación en depósito</label>
+        <input name="ubicacion" value="{{ valores.get('ubicacion', '') }}" placeholder="Depósito · Rack B2"
+               class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Talles</label>
+        <input name="talles" value="{{ valores.get('talles', '') }}" placeholder="35–45"
+               class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
     </div>
 
     <div class="flex gap-3 pt-2">
