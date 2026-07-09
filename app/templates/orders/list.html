@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Pedidos · StockBox{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-slate-900">Pedidos de la tienda</h1>
+  <a href="{{ url_for('store.index') }}" target="_blank"
+     class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">🛍️ Abrir tienda pública</a>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="text-left text-xs uppercase tracking-wide text-slate-500 border-b border-slate-200">
+        <th class="px-4 py-3">Pedido</th>
+        <th class="px-4 py-3">Fecha</th>
+        <th class="px-4 py-3">Cliente</th>
+        <th class="px-4 py-3">Contacto</th>
+        <th class="px-4 py-3 text-center">Items</th>
+        <th class="px-4 py-3 text-right">Total</th>
+        <th class="px-4 py-3">Estado</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      {% for p in pedidos %}
+      <tr class="hover:bg-slate-50 cursor-pointer" onclick="window.location='{{ url_for('orders.detalle', order_id=p.id) }}'">
+        <td class="px-4 py-3 font-mono text-slate-500">#{{ p.id }}</td>
+        <td class="px-4 py-3 text-slate-500">{{ p.creado_en.strftime('%d/%m %H:%M') }}</td>
+        <td class="px-4 py-3 font-medium text-slate-900">{{ p.cliente }}</td>
+        <td class="px-4 py-3 text-slate-500">{{ p.telefono }}</td>
+        <td class="px-4 py-3 text-center text-slate-700">{{ p.items|length }}</td>
+        <td class="px-4 py-3 text-right font-semibold">${{ "{:,.0f}".format(p.total) }}</td>
+        <td class="px-4 py-3">
+          <span class="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-1 rounded-full">{{ p.estado }}</span>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="7" class="px-4 py-12 text-center text-slate-400">
+          Todavía no hay pedidos. Los que entren por la tienda pública aparecen acá.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

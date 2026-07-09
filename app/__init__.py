@@ -31,12 +31,16 @@ def create_app():
     from app.routes.auth import bp as auth_bp
     from app.routes.dashboard import bp as dashboard_bp
     from app.routes.movements import bp as movements_bp
+    from app.routes.orders import bp as orders_bp
     from app.routes.products import bp as products_bp
+    from app.routes.store import bp as store_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(movements_bp)
+    app.register_blueprint(orders_bp)
     app.register_blueprint(products_bp)
+    app.register_blueprint(store_bp)
 
     @app.cli.command("create-admin")
     @click.argument("username")

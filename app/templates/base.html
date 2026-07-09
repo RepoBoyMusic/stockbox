@@ -17,9 +17,12 @@
           <a href="{{ url_for('dashboard.index') }}" class="hover:text-white">Dashboard</a>
           <a href="{{ url_for('products.index') }}" class="hover:text-white">Productos</a>
           <a href="{{ url_for('movements.index') }}" class="hover:text-white">Movimientos</a>
+          <a href="{{ url_for('orders.index') }}" class="hover:text-white">Pedidos</a>
         </div>
       </div>
       <div class="flex items-center gap-4 text-sm">
+        <a href="{{ url_for('store.index') }}" target="_blank"
+           class="text-slate-300 hover:text-white">🛍️ Ver tienda</a>
         <span class="text-slate-400">👤 {{ current_user.username }}</span>
         <a href="{{ url_for('auth.logout') }}"
            class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg transition-colors">Salir</a>

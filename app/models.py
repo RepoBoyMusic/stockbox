@@ -71,3 +71,50 @@ class Movement(db.Model):
     cantidad = db.Column(db.Integer, nullable=False)
     nota = db.Column(db.String(200))
     fecha = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class Order(db.Model):
+    """Pedido de la tienda pública. Al confirmarse descuenta stock registrando
+    movimientos de venta (nota con el número de pedido): la venta online entra
+    por el mismo circuito auditable que cualquier salida de depósito."""
+
+    # "order" es palabra reservada en SQL; usamos un nombre de tabla explícito.
+    __tablename__ = "pedido"
+
+    ESTADOS = ("pendiente", "confirmado", "entregado", "cancelado")
+
+    id = db.Column(db.Integer, primary_key=True)
+    cliente = db.Column(db.String(80), nullable=False)
+    telefono = db.Column(db.String(40), nullable=False)  # WhatsApp del cliente
+    nota = db.Column(db.String(200))
+    estado = db.Column(db.String(20), nullable=False, default="pendiente")
+    creado_en = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    items = db.relationship(
+        "OrderItem", backref="pedido", lazy=True, cascade="all, delete-orphan"
+    )
+
+    @property
+    def total(self):
+        return sum(item.cantidad * item.precio_unitario for item in self.items)
+
+
+class OrderItem(db.Model):
+    """Renglón de un pedido. Guarda una FOTO del producto al momento de comprar
+    (nombre, sku, precio): si el producto cambia de precio o se elimina, el
+    pedido conserva su historia intacta (por eso product_id puede quedar NULL)."""
+
+    __tablename__ = "pedido_item"
+
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey("pedido.id"), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=True)
+    sku = db.Column(db.String(40), nullable=False)
+    nombre = db.Column(db.String(120), nullable=False)
+    talle = db.Column(db.String(10), nullable=False)
+    cantidad = db.Column(db.Integer, nullable=False)
+    precio_unitario = db.Column(db.Numeric(10, 2), nullable=False)
+
+    # Si se borra el producto, el default del ORM deja product_id en NULL
+    # y el renglón sobrevive gracias al snapshot.
+    producto = db.relationship("Product", backref="renglones_pedido")

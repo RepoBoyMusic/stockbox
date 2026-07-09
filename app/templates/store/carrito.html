@@ -1,0 +1,45 @@
+{% extends "store/base.html" %}
+{% block title %}Tu carrito · Sneakers Store{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold text-slate-900 mb-6">Tu carrito</h1>
+
+{% if lineas %}
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100">
+  {% for l in lineas %}
+  <div class="flex items-center gap-4 p-4">
+    <div class="flex-1">
+      <p class="font-medium text-slate-900">{{ l.producto.nombre }}</p>
+      <p class="text-xs text-slate-500">
+        <span class="font-mono">{{ l.producto.sku }}</span> · talle {{ l.talle }} · {{ l.cantidad }} u.
+      </p>
+    </div>
+    <p class="font-semibold text-slate-900">${{ "{:,.0f}".format(l.subtotal) }}</p>
+    <form method="post" action="{{ url_for('store.quitar', clave=l.clave) }}">
+      <button class="text-red-500 hover:text-red-700 text-sm font-medium">Quitar</button>
+    </form>
+  </div>
+  {% endfor %}
+  <div class="flex items-center justify-between p-4 bg-slate-50 rounded-b-2xl">
+    <span class="font-medium text-slate-600">Total</span>
+    <span class="text-2xl font-bold text-slate-900">${{ "{:,.0f}".format(total) }}</span>
+  </div>
+</div>
+
+<div class="flex gap-3 mt-6">
+  <a href="{{ url_for('store.checkout') }}"
+     class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg px-6 py-3 text-sm transition-colors">
+    Finalizar compra
+  </a>
+  <a href="{{ url_for('store.index') }}"
+     class="border border-slate-300 hover:bg-slate-50 text-slate-600 font-medium rounded-lg px-6 py-3 text-sm transition-colors">
+    Seguir comprando
+  </a>
+</div>
+{% else %}
+<div class="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+  <p class="text-slate-400 mb-4">Tu carrito está vacío.</p>
+  <a href="{{ url_for('store.index') }}" class="text-indigo-600 font-medium">Ver el catálogo</a>
+</div>
+{% endif %}
+{% endblock %}

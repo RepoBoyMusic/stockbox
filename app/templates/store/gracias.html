@@ -1,0 +1,33 @@
+{% extends "store/base.html" %}
+{% block title %}¡Gracias por tu compra! · Sneakers Store{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto bg-white rounded-2xl border border-slate-200 shadow-sm p-8 text-center">
+  <div class="text-5xl mb-3">✅</div>
+  <h1 class="text-2xl font-bold text-slate-900 mb-1">¡Pedido confirmado!</h1>
+  <p class="text-slate-500 mb-6">Pedido <span class="font-mono font-semibold">#{{ pedido.id }}</span> · {{ pedido.cliente }}</p>
+
+  <div class="text-left bg-slate-50 rounded-xl p-4 divide-y divide-slate-100 mb-6">
+    {% for item in pedido.items %}
+    <div class="flex justify-between py-2 text-sm">
+      <span class="text-slate-600">{{ item.nombre }} · t{{ item.talle }} · {{ item.cantidad }}u</span>
+      <span class="font-medium text-slate-900">${{ "{:,.0f}".format(item.cantidad * item.precio_unitario) }}</span>
+    </div>
+    {% endfor %}
+    <div class="flex justify-between pt-3 mt-1">
+      <span class="font-medium text-slate-600">Total</span>
+      <span class="text-lg font-bold text-slate-900">${{ "{:,.0f}".format(pedido.total) }}</span>
+    </div>
+  </div>
+
+  <p class="text-sm text-slate-500 mb-6">
+    Te vamos a contactar por WhatsApp al <span class="font-medium text-slate-700">{{ pedido.telefono }}</span>
+    para coordinar el pago y la entrega.
+  </p>
+
+  <a href="{{ url_for('store.index') }}"
+     class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg px-6 py-3 text-sm transition-colors">
+    Volver al catálogo
+  </a>
+</div>
+{% endblock %}

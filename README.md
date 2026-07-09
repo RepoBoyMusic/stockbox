@@ -19,6 +19,7 @@ I spent 5+ years working in warehouses and logistics using enterprise systems li
 - ↕️ **Stock movements** — stock is never edited by hand: every change is an entry/exit with a reason (purchase, sale, adjustment, return). Full audit trail, like real WMS systems
 - 🚫 **Business rules enforced server-side** — stock can never go negative; the backend re-validates everything, never trusting the client
 - 📊 **Dashboard** — inventory value (aggregated in SQL, not Python), low-stock alerts sorted by criticality, one-click restock flow
+- 🛍️ **Public storefront** — a customer-facing shop at `/tienda` reads the *same* product table: no sync, one source of truth. Cart, size picker and checkout; confirming an order deducts stock through the same audited sale movement as any warehouse exit, and the order lands in the admin panel with the customer's WhatsApp for delivery
 - 🌱 **Reproducible demo data** — `seed.py` with a fixed random seed (see *Demo data* below)
 
 ### Demo data
@@ -79,6 +80,7 @@ Trabajé más de 5 años en depósitos y logística usando sistemas enterprise c
 - ↕️ **Movimientos de stock** — el stock nunca se edita a mano: cada cambio es una entrada/salida con motivo. Historial auditable completo, como los WMS reales
 - 🚫 **Reglas de negocio en el backend** — el stock nunca queda negativo; el servidor revalida todo
 - 📊 **Dashboard** — valor del inventario (agregado en SQL), alertas de stock bajo ordenadas por criticidad, reposición en un clic
+- 🛍️ **Tienda pública** — un frente de venta en `/tienda` lee la *misma* tabla de productos: no hay sincronización, hay una sola fuente de verdad. Carrito, selector de talle y checkout; al confirmar un pedido se descuenta stock con el mismo movimiento de venta auditado que cualquier salida de depósito, y el pedido aparece en el panel con el WhatsApp del cliente para coordinar la entrega
 - 🌱 **Datos demo reproducibles** — `seed.py` con seed fijo (ver *Datos demo*)
 
 ### Datos demo

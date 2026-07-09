@@ -1,7 +1,9 @@
 # Configuración de deploy para Render (https://render.com)
-# El plan free tiene disco efímero: la base SQLite se resetea en cada deploy,
-# por eso corremos seed.py al arrancar — la demo siempre tiene datos frescos.
-# Para datos persistentes: definir DATABASE_URL apuntando a un Postgres.
+# Persistencia: se define DATABASE_URL (Postgres de Supabase) como secreto en
+# el panel de Render. Con eso los datos —incluidos los pedidos de la tienda—
+# sobreviven a cada deploy. seed.py corre al arrancar pero solo carga el
+# catálogo la PRIMERA vez (si ya hay productos, no toca nada).
+# Sin DATABASE_URL, la app cae a SQLite efímero (útil solo como demo).
 services:
   - type: web
     name: stockbox
@@ -14,3 +16,7 @@ services:
         generateValue: true
       - key: PYTHON_VERSION
         value: 3.12.4
+      # DATABASE_URL se carga como secreto en el panel de Render (no acá):
+      # es la connection string del Session Pooler de Supabase.
+      - key: DATABASE_URL
+        sync: false

@@ -1,0 +1,63 @@
+{% extends "store/base.html" %}
+{% block title %}Sneakers Store · Catálogo{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+  <h1 class="text-3xl font-bold text-slate-900 mb-1">Zapatillas importadas</h1>
+  <p class="text-slate-500">Elegí tu modelo y tu talle. Coordinamos la entrega por WhatsApp.</p>
+</div>
+
+<form method="get" class="flex flex-wrap gap-3 mb-6">
+  <input type="text" name="q" value="{{ q }}" placeholder="Buscar modelo o SKU…"
+         class="flex-1 min-w-48 rounded-lg border border-slate-300 px-4 py-2.5 text-sm bg-white
+                focus:outline-none focus:ring-2 focus:ring-indigo-500">
+  <select name="categoria"
+          class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm bg-white
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    <option value="">Todas las calidades</option>
+    {% for c in categorias %}
+    <option value="{{ c }}" {{ 'selected' if c == categoria_sel }}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <button class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors">
+    Filtrar
+  </button>
+</form>
+
+{% if productos %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+  {% for p in productos %}
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col">
+    <div class="flex items-start justify-between mb-2">
+      <span class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2 py-1 rounded-full">{{ p.categoria }}</span>
+      <span class="text-xs text-slate-400 font-mono">{{ p.sku }}</span>
+    </div>
+    <h2 class="font-semibold text-slate-900 leading-snug">{{ p.nombre }}</h2>
+    <p class="text-2xl font-bold text-slate-900 mt-2">${{ "{:,.0f}".format(p.precio) }}</p>
+    <p class="text-xs text-slate-400 mt-1">
+      {% if p.stock <= 5 %}<span class="text-amber-600 font-medium">¡Últimos {{ p.stock }} pares!</span>
+      {% else %}{{ p.stock }} pares disponibles{% endif %}
+    </p>
+
+    <form method="post" action="{{ url_for('store.agregar', product_id=p.id) }}" class="mt-4 flex gap-2">
+      <select name="talle" required
+              class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white
+                     focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <option value="">Talle…</option>
+        {% for t in talles_por_producto[p.id] %}
+        <option value="{{ t }}">{{ t }}</option>
+        {% endfor %}
+      </select>
+      <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
+        Agregar
+      </button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
+  No encontramos productos para esa búsqueda.
+</div>
+{% endif %}
+{% endblock %}
