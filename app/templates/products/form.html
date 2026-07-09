@@ -12,13 +12,13 @@
     <div class="grid grid-cols-2 gap-4">
       <div>
         <label class="block text-sm font-medium mb-1">SKU *</label>
-        <input name="sku" required value="{{ valores.get('sku', '') }}" placeholder="NKE-DUNK-G5"
+        <input name="sku" required value="{{ valores.get('sku', '') }}" placeholder="NKE-DUNK"
                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
                       focus:outline-none focus:ring-2 focus:ring-indigo-500">
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Categoría</label>
-        <input name="categoria" value="{{ valores.get('categoria', '') }}" placeholder="G5"
+        <input name="categoria" value="{{ valores.get('categoria', '') }}" placeholder="Urbanas"
                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
                       focus:outline-none focus:ring-2 focus:ring-indigo-500">
       </div>
@@ -73,8 +73,8 @@
                       focus:outline-none focus:ring-2 focus:ring-indigo-500">
       </div>
       <div>
-        <label class="block text-sm font-medium mb-1">Talles</label>
-        <input name="talles" value="{{ valores.get('talles', '') }}" placeholder="35–45"
+        <label class="block text-sm font-medium mb-1">Talles (un par por talle)</label>
+        <input name="talles" value="{{ valores.get('talles', '') }}" placeholder="40, 42, 43"
                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm
                       focus:outline-none focus:ring-2 focus:ring-indigo-500">
       </div>

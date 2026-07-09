@@ -6,6 +6,10 @@ hay nada que "sincronizar": si cambiás un precio o un stock en el panel,
 la tienda lo refleja al instante, y una compra online descuenta stock
 registrando un movimiento de venta, igual que cualquier salida de depósito.
 
+Modelo de venta: pares únicos. Cada talle listado en un producto es UN par
+físico. Comprar el talle 42 saca ese par de la lista y descuenta 1 de stock;
+el mismo par no puede estar dos veces en un carrito ni venderse dos veces.
+
 El carrito vive en la sesión del visitante (cookie firmada), no en la base:
 un carrito a medio llenar no ensucia los datos del negocio.
 """
@@ -20,23 +24,7 @@ from app.models import Movement, Order, OrderItem, Product
 
 bp = Blueprint("store", __name__, url_prefix="/tienda")
 
-CARRITO = "carrito"  # clave del carrito en la sesión
-
-
-def _expandir_talles(rango):
-    """'35–45' -> ['35','36',...,'45']. Tolera guion normal o en-dash y
-    valores sueltos. Si no se puede parsear, devuelve el texto tal cual."""
-    if not rango:
-        return []
-    texto = rango.replace("–", "-").replace("—", "-")
-    if "-" in texto:
-        try:
-            desde, hasta = (int(x.strip()) for x in texto.split("-", 1))
-            if desde <= hasta:
-                return [str(n) for n in range(desde, hasta + 1)]
-        except ValueError:
-            pass
-    return [t.strip() for t in texto.split(",") if t.strip()]
+CARRITO = "carrito"  # clave del carrito en la sesión: {"product_id:talle": 1}
 
 
 def _carrito():
@@ -50,20 +38,16 @@ def _guardar_carrito(carrito):
 
 def _lineas_carrito(carrito):
     """Reconstruye las líneas del carrito desde la base (precio y datos
-    siempre frescos). Devuelve (lineas, total). Ignora items cuyo producto
-    ya no exista."""
+    siempre frescos). Cada línea es un par único (cantidad 1). Ignora
+    items cuyo producto ya no exista."""
     lineas, total = [], Decimal("0")
-    for clave, cantidad in carrito.items():
+    for clave in carrito:
         pid, talle = clave.split(":", 1)
         producto = db.session.get(Product, int(pid))
         if not producto:
             continue
-        subtotal = producto.precio * cantidad
-        total += subtotal
-        lineas.append({
-            "clave": clave, "producto": producto, "talle": talle,
-            "cantidad": cantidad, "subtotal": subtotal,
-        })
+        total += producto.precio
+        lineas.append({"clave": clave, "producto": producto, "talle": talle})
     return lineas, total
 
 
@@ -83,12 +67,9 @@ def index():
     categorias = [
         c[0] for c in db.session.query(Product.categoria).distinct().order_by(Product.categoria)
     ]
-    carrito = _carrito()
     return render_template(
         "store/index.html",
         productos=productos, categorias=categorias, q=q, categoria_sel=categoria,
-        items_carrito=sum(carrito.values()),
-        talles_por_producto={p.id: _expandir_talles(p.talles) for p in productos},
     )
 
 
@@ -99,16 +80,18 @@ def agregar(product_id):
     if not talle:
         flash("Elegí un talle antes de agregar al carrito.", "error")
         return redirect(url_for("store.index"))
+    # El talle tiene que ser un par que exista HOY (el form podría venir viejo)
+    if talle not in producto.talles_lista or producto.stock < 1:
+        flash(f"El par de {producto.nombre} talle {talle} ya no está disponible.", "error")
+        return redirect(url_for("store.index"))
 
     carrito = _carrito()
     clave = f"{product_id}:{talle}"
-    en_carrito = carrito.get(clave, 0)
-    # No dejamos reservar más de lo que hay en stock
-    if en_carrito + 1 > producto.stock:
-        flash(f"No hay más stock de {producto.nombre} (talle {talle}).", "error")
+    if clave in carrito:
+        flash(f"Ese par ({producto.nombre} talle {talle}) ya está en tu carrito — es único.", "error")
         return redirect(url_for("store.index"))
 
-    carrito[clave] = en_carrito + 1
+    carrito[clave] = 1  # un par por talle: la cantidad es siempre 1
     _guardar_carrito(carrito)
     flash(f"{producto.nombre} (talle {talle}) agregado al carrito.", "ok")
     return redirect(url_for("store.index"))
@@ -146,13 +129,13 @@ def checkout():
         if not telefono:
             errores.append("Necesitamos un teléfono de contacto.")
 
-        # Revalidamos stock CONTRA LA BASE en el momento de confirmar: entre
-        # que armó el carrito y confirmó, el stock pudo cambiar.
+        # Revalidamos CONTRA LA BASE al confirmar: entre que armó el carrito
+        # y confirmó, ese par único pudo habérselo llevado otro cliente.
         for linea in lineas:
-            if linea["cantidad"] > linea["producto"].stock:
+            producto, talle = linea["producto"], linea["talle"]
+            if talle not in producto.talles_lista or producto.stock < 1:
                 errores.append(
-                    f"Se quedó sin stock suficiente de {linea['producto'].nombre} "
-                    f"(quedan {linea['producto'].stock})."
+                    f"El par {producto.nombre} talle {talle} se vendió mientras comprabas."
                 )
 
         if errores:
@@ -171,19 +154,18 @@ def checkout():
         db.session.flush()  # necesitamos el id del pedido para la nota del movimiento
 
         for linea in lineas:
-            producto = linea["producto"]
-            cantidad = linea["cantidad"]
+            producto, talle = linea["producto"], linea["talle"]
             db.session.add(OrderItem(
                 order_id=pedido.id, product_id=producto.id, sku=producto.sku,
-                nombre=producto.nombre, talle=linea["talle"], cantidad=cantidad,
+                nombre=producto.nombre, talle=talle, cantidad=1,
                 precio_unitario=producto.precio,
             ))
             db.session.add(Movement(
                 product_id=producto.id, tipo="salida", motivo="venta",
-                cantidad=cantidad,
-                nota=f"Pedido #{pedido.id} · talle {linea['talle']} · tienda",
+                cantidad=1, nota=f"Pedido #{pedido.id} · talle {talle} · tienda",
             ))
-            producto.stock -= cantidad
+            producto.quitar_talle(talle)  # ese par único ya no está disponible
+            producto.stock -= 1
 
         db.session.commit()
         _guardar_carrito({})  # vaciamos el carrito

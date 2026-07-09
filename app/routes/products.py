@@ -58,7 +58,7 @@ def _leer_formulario():
 @bp.route("/")
 @login_required
 def index():
-    # Búsqueda y filtro vienen como query params: /productos?q=dunk&categoria=G5
+    # Búsqueda y filtro vienen como query params: /productos?q=dunk&categoria=Urbanas
     q = request.args.get("q", "").strip()
     categoria = request.args.get("categoria", "").strip()
 

@@ -11,10 +11,10 @@
     <div class="flex-1">
       <p class="font-medium text-slate-900">{{ l.producto.nombre }}</p>
       <p class="text-xs text-slate-500">
-        <span class="font-mono">{{ l.producto.sku }}</span> · talle {{ l.talle }} · {{ l.cantidad }} u.
+        <span class="font-mono">{{ l.producto.sku }}</span> · talle {{ l.talle }} · par único
       </p>
     </div>
-    <p class="font-semibold text-slate-900">${{ "{:,.0f}".format(l.subtotal) }}</p>
+    <p class="font-semibold text-slate-900">${{ "{:,.0f}".format(l.producto.precio) }}</p>
     <form method="post" action="{{ url_for('store.quitar', clave=l.clave) }}">
       <button class="text-red-500 hover:text-red-700 text-sm font-medium">Quitar</button>
     </form>

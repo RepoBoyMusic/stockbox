@@ -24,14 +24,12 @@ I spent 5+ years working in warehouses and logistics using enterprise systems li
 
 ### Demo data
 
-`seed.py` loads a small imported-sneaker store, ready to explore:
+`seed.py` loads a small sneaker-reseller catalog, ready to explore:
 
-- **59 models** — the best sellers of the Argentine market (Air Force 1, TN, Dunk, Jordan, Yeezy, Samba, New Balance, Asics…)
-- Organized by **quality grade**, from entry level to top tier: `AAA · 1:1 · PK · OG · G5`
-- Each model carries its **size run** (e.g. `35–45`)
-- Realistic prices per grade and physical locations (racks, showroom, shop window)
-- Two weeks of simulated sales and restocks (fixed random seed: always reproducible)
-- Demo stocks are capped at 15 pairs per model — a choice made when building this catalog, not a limit of the app
+- **59 models** — the best sellers of the Argentine market (Air Force 1, Dunk, Jordan, Samba, New Balance, Asics…) at realistic Argentine retail prices
+- Organized by category: `Básquet · Retro · Running · Trail · Urbanas`
+- **Unique pairs**, like a real small reseller: 1–3 pairs per model, and each listed size is one physical pair — selling size 42 removes that exact pair from the storefront
+- Physical locations (racks, showroom, shop window) and a coherent movement history (fixed random seed: always reproducible)
 
 ### Tech stack
 
@@ -85,14 +83,12 @@ Trabajé más de 5 años en depósitos y logística usando sistemas enterprise c
 
 ### Datos demo
 
-`seed.py` carga una pequeña tienda de zapatillas importadas, lista para explorar:
+`seed.py` carga el catálogo de un revendedor chico de zapatillas, listo para explorar:
 
-- **59 modelos** — los más vendidos del mercado argentino (Air Force 1, TN, Dunk, Jordan, Yeezy, Samba, New Balance, Asics…)
-- Separados por **calidad**, de gama de entrada a gama top: `AAA · 1:1 · PK · OG · G5`
-- Cada modelo con su **curva de talles** (ej: `35–45`)
-- Precios realistas por gama y ubicaciones físicas (racks, salón, vidriera)
-- Dos semanas de ventas y reposiciones simuladas (seed fijo: siempre reproducible)
-- Los stocks demo tienen un tope de 15 pares por modelo — un criterio de armado de este catálogo, no un límite de la app
+- **59 modelos** — los más vendidos del mercado argentino (Air Force 1, Dunk, Jordan, Samba, New Balance, Asics…) a precios reales de retail argentino
+- Separados por categoría: `Básquet · Retro · Running · Trail · Urbanas`
+- **Pares únicos**, como un revendedor real: 1–3 pares por modelo, y cada talle listado es un par físico — vender el talle 42 saca ese par exacto de la tienda
+- Ubicaciones físicas (racks, salón, vidriera) e historial de movimientos coherente (seed fijo: siempre reproducible)
 
 ### Correrlo local
 

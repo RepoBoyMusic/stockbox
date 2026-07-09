@@ -48,6 +48,7 @@ def eliminar(order_id):
                     nota=f"Devolución por pedido #{pedido.id} eliminado",
                 ))
                 item.producto.stock += item.cantidad
+                item.producto.devolver_talle(item.talle)  # el par vuelve a estar disponible
 
     db.session.delete(pedido)  # cascade borra los renglones (y los datos del cliente)
     db.session.commit()

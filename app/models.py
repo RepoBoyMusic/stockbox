@@ -41,7 +41,9 @@ class Product(db.Model):
     stock = db.Column(db.Integer, nullable=False, default=0)
     stock_minimo = db.Column(db.Integer, nullable=False, default=0)
     ubicacion = db.Column(db.String(60))  # ej: "Depósito · Rack B2"
-    talles = db.Column(db.String(60))  # curva de talles del modelo, ej: "35–45"
+    # Pares físicos disponibles, un par por talle: "40, 42, 43" = 3 pares.
+    # La tienda vende por talle: al vender el 42, se quita de esta lista.
+    talles = db.Column(db.String(60))
     creado_en = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Un producto tiene muchos movimientos; desde un movimiento se llega
@@ -54,6 +56,26 @@ class Product(db.Model):
     @property
     def bajo_stock(self):
         return self.stock <= self.stock_minimo
+
+    @property
+    def talles_lista(self):
+        """Los talles disponibles como lista: '40, 42, 43' -> ['40','42','43']."""
+        if not self.talles:
+            return []
+        return [t.strip() for t in self.talles.split(",") if t.strip()]
+
+    def quitar_talle(self, talle):
+        """Saca un par vendido de la lista de talles disponibles."""
+        restantes = [t for t in self.talles_lista if t != talle]
+        self.talles = ", ".join(restantes)
+
+    def devolver_talle(self, talle):
+        """Reincorpora un par (pedido eliminado/devolución), ordenado."""
+        talles = self.talles_lista
+        if talle not in talles:
+            talles.append(talle)
+            talles.sort(key=lambda t: (len(t), t))  # orden numérico para '38' < '40'
+        self.talles = ", ".join(talles)
 
 
 class Movement(db.Model):

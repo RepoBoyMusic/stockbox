@@ -3,8 +3,8 @@
 
 {% block content %}
 <div class="mb-8">
-  <h1 class="text-3xl font-bold text-slate-900 mb-1">Zapatillas importadas</h1>
-  <p class="text-slate-500">Elegí tu modelo y tu talle. Coordinamos la entrega por WhatsApp.</p>
+  <h1 class="text-3xl font-bold text-slate-900 mb-1">Zapatillas originales</h1>
+  <p class="text-slate-500">Pares únicos: cada talle publicado es un par real en stock. Coordinamos la entrega por WhatsApp.</p>
 </div>
 
 <form method="get" class="flex flex-wrap gap-3 mb-6">
@@ -14,7 +14,7 @@
   <select name="categoria"
           class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm bg-white
                  focus:outline-none focus:ring-2 focus:ring-indigo-500">
-    <option value="">Todas las calidades</option>
+    <option value="">Todas las categorías</option>
     {% for c in categorias %}
     <option value="{{ c }}" {{ 'selected' if c == categoria_sel }}>{{ c }}</option>
     {% endfor %}
@@ -35,8 +35,8 @@
     <h2 class="font-semibold text-slate-900 leading-snug">{{ p.nombre }}</h2>
     <p class="text-2xl font-bold text-slate-900 mt-2">${{ "{:,.0f}".format(p.precio) }}</p>
     <p class="text-xs text-slate-400 mt-1">
-      {% if p.stock <= 5 %}<span class="text-amber-600 font-medium">¡Últimos {{ p.stock }} pares!</span>
-      {% else %}{{ p.stock }} pares disponibles{% endif %}
+      {% if p.stock == 1 %}<span class="text-amber-600 font-medium">¡Último par! Talle {{ p.talles }}</span>
+      {% else %}{{ p.stock }} pares · talles {{ p.talles }}{% endif %}
     </p>
 
     <form method="post" action="{{ url_for('store.agregar', product_id=p.id) }}" class="mt-4 flex gap-2">
@@ -44,7 +44,7 @@
               class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white
                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
         <option value="">Talle…</option>
-        {% for t in talles_por_producto[p.id] %}
+        {% for t in p.talles_lista %}
         <option value="{{ t }}">{{ t }}</option>
         {% endfor %}
       </select>

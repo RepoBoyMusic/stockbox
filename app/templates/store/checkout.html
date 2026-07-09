@@ -41,8 +41,8 @@
     <div class="divide-y divide-slate-100">
       {% for l in lineas %}
       <div class="flex justify-between py-2 text-sm">
-        <span class="text-slate-600">{{ l.producto.nombre }} · t{{ l.talle }} · {{ l.cantidad }}u</span>
-        <span class="font-medium text-slate-900">${{ "{:,.0f}".format(l.subtotal) }}</span>
+        <span class="text-slate-600">{{ l.producto.nombre }} · talle {{ l.talle }}</span>
+        <span class="font-medium text-slate-900">${{ "{:,.0f}".format(l.producto.precio) }}</span>
       </div>
       {% endfor %}
     </div>
