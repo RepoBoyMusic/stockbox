@@ -21,6 +21,11 @@
         </div>
       </div>
       <div class="flex items-center gap-4 text-sm">
+        {% if dolar_blue %}
+        <span class="text-xs text-slate-400" title="Dólar blue · se actualiza cada 10 minutos">
+          💵 Blue <span class="text-emerald-400 font-semibold">${{ "{:,.0f}".format(dolar_blue.venta) }}</span>
+        </span>
+        {% endif %}
         <a href="{{ url_for('store.index') }}" target="_blank"
            class="text-slate-300 hover:text-white">🛍️ Ver tienda</a>
         <span class="text-slate-400">👤 {{ current_user.username }}</span>

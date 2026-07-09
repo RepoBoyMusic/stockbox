@@ -42,6 +42,14 @@ def create_app():
     app.register_blueprint(products_bp)
     app.register_blueprint(store_bp)
 
+    # La cotización del dólar queda disponible en TODAS las plantillas
+    # (tienda y panel) sin que cada vista tenga que pasarla a mano.
+    from app.dolar import cotizacion_blue
+
+    @app.context_processor
+    def inyectar_dolar():
+        return {"dolar_blue": cotizacion_blue()}
+
     @app.cli.command("create-admin")
     @click.argument("username")
     @click.argument("password")
